@@ -57,6 +57,10 @@ network={
 
 `git clone https://github.com/SheffieldMLtracking/bee_track.git`
 
+- *Clone the retrodetect repo:*
+
+`git clone https://github.com/SheffieldMLtracking/btretrodetect.git`
+
 - Run `aravissetup` from the root directory
 
 `source bee_track/aravissetup`
@@ -64,38 +68,25 @@ network={
 
 This should install any dependencies needed for aravis, clone aravis, setup, build and install it ready to be used.
 
-- THEN install python dependencies in the venv (make sure it `(bee-venv)` is on the left of the bash)
+- THEN install python dependencies in the venv:
 
-`pip install -r bee_track/requirements.txt`
+`pip install -r bee_track/requirementsJLW250130.txt` *NB: this file is temporary while I test for bugs. Soon I will merge it withe "requirements.txt."*
 
 This must be done after running `aravissetup` because some of the python modules rely on some of the installs when installing aravis.
 
-*Now we need to install btretrodetect and its dependencies. Hopefully we can eventually incorportate this into the prevous step but for now we'll do it manually:*
-- *Clone the retrodetect repo:*
-
-`git clone https://github.com/SheffieldMLtracking/btretrodetect.git`
-
-- *Install it*
-
-`pip install git+https://github.com/SheffieldMLtracking/btretrodetect.git`
-
-- *Then install sklearn:*
-
-`pip3 install -U scikit-learn`
-
-- *...and simplejpeg:*
-
-`pip install simplejpeg`
-
 *Before we can run btretrodetect, we need to give it an offset file so it knows how to translate between monochrom and colour camera coordinates. We will work out the true offset later, but for now we need to give it a dummy file so it doesn't crash on boot:*
-- *Create a file:*
+-*Create the necessary directory:*
+
+`mkdir /home/pi/.btretrodetect`
+
+- *Create a blank offset file:*
 
 `sudo nano /home/pi/.btretrodetect/offset.json`
 
 - *Now paste the following text and save the file:*
 
 ```
-{"all": [20, 10]}
+{"all": [0, 0]}
 ```
 
 - Set the device ID file: make a new file called 'device_id.txt' in the `~/bee_track/webinterface` folder:
@@ -218,7 +209,9 @@ Follow the GUI menu  system to create a new wifi connection and specify the netw
 
 ## If you want to make edits
 
-You will probably want to reinstall with git an editable version
+You will probably want to reinstall with git an editable version:
+
+- First do "beetrack": 
 
 (bee-venv)$ `pip uninstall bee_track`
 
@@ -226,6 +219,24 @@ You will probably want to reinstall with git an editable version
 
 (bee-venv)$ `pip install -e .`
 
+- Now do the same for "btcontrol": 
+
+(bee-venv)$ `pip uninstall btcontrol`
+
+(bee-venv)$ `cd ~/btcontrol`
+
+(bee-venv)$ `pip install -e .`
+
+*Temporarily, we need to make a edit to beetrack to allow it to import btretrodetect. In the future we will update bee_track so this is not necessary, but I don't want to do this while Mike is still working on btretrodetect*
+
+*Edit "core.py":*
+
+`sudo nano bee_track/bee_track/core.py`
+
+*Find the line that reads: `import retrodetect as rd`*
+*Replace with:*
+
+`import btretrodetect as rd`
 
 
 # Running Beetrack from command line
