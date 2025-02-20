@@ -1,21 +1,21 @@
 numpy
 scipy
 flask
-RPi.GPIO --use-pep517
+RPi.GPIO
 ninja
 PyGObject
 rpimotorlib
 rpi-lgpio
-libsvm --use-pep517
+libsvm
 mem_top
 scikit-learn
 simplejpeg
 
 -e bee_track @ git+https://github.com/SheffieldMLtracking/bee_track.git 
 
-git+https://github.com/SheffieldMLtracking/btretrodetect.git --use-pep517
+git+https://github.com/SheffieldMLtracking/btretrodetect.git
 
-QueueBuffer @ git+https://github.com/lionfish0/QueueBuffer.git --use-pep517
+QueueBuffer @ git+https://github.com/lionfish0/QueueBuffer.git
 
 psutil==5.*
 Flask-Cors==4.*
