@@ -231,7 +231,7 @@ You will probably want to reinstall with git an editable version:
 
 *Edit "core.py":*
 
-`sudo nano bee_track/bee_track/core.py`
+`sudo nano ~/bee_track/bee_track/core.py`
 
 *Find the line that reads: `import retrodetect as rd`*
 *Replace with:*
