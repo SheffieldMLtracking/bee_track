@@ -219,11 +219,11 @@ You will probably want to reinstall with git an editable version:
 
 (bee-venv)$ `pip install -e .`
 
-- Now do the same for "btcontrol": 
+- Now do the same for "btretrodetect": 
 
-(bee-venv)$ `pip uninstall btcontrol`
+(bee-venv)$ `pip uninstall btretrodetect`
 
-(bee-venv)$ `cd ~/btcontrol`
+(bee-venv)$ `cd ~/btretrodetect`
 
 (bee-venv)$ `pip install -e .`
 
@@ -237,6 +237,10 @@ You will probably want to reinstall with git an editable version:
 *Replace with:*
 
 `import btretrodetect as rd`
+
+### Now reboot the pi: Bee_track should start automatically
+
+'sudo reboot'
 
 
 # Running Beetrack from command line
