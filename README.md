@@ -240,7 +240,7 @@ You will probably want to reinstall with git an editable version:
 
 ### Now reboot the pi: Bee_track should start automatically
 
-'sudo reboot'
+`sudo reboot`
 
 
 # Running Beetrack from command line
