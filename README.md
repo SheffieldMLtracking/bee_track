@@ -57,7 +57,7 @@ network={
 
 `git clone https://github.com/SheffieldMLtracking/bee_track.git`
 
-- *Clone the retrodetect repo:*
+- Clone the retrodetect repo:
 
 `git clone https://github.com/SheffieldMLtracking/btretrodetect.git`
 
@@ -70,7 +70,7 @@ This should install any dependencies needed for aravis, clone aravis, setup, bui
 
 - THEN install python dependencies in the venv:
 
-`pip install -r bee_track/requirementsJLW250130.txt` *NB: this file is temporary while I test for bugs. Soon I will merge it withe "requirements.txt."*
+`pip install -r bee_track/requirements.txt`
 
 This must be done after running `aravissetup` because some of the python modules rely on some of the installs when installing aravis.
 
@@ -227,16 +227,7 @@ You will probably want to reinstall with git an editable version:
 
 (bee-venv)$ `pip install -e .`
 
-*Temporarily, we need to make a edit to beetrack to allow it to import btretrodetect. In the future we will update bee_track so this is not necessary, but I don't want to do this while Mike is still working on btretrodetect*
 
-*Edit "core.py":*
-
-`sudo nano ~/bee_track/bee_track/core.py`
-
-*Find the line that reads: `import retrodetect as rd`*
-*Replace with:*
-
-`import btretrodetect as rd`
 
 ### Now reboot the pi: Bee_track should start automatically
 
