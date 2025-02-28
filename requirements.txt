@@ -8,10 +8,13 @@ rpimotorlib
 rpi-lgpio
 libsvm
 mem_top
+scikit-learn
+simplejpeg
 
 -e bee_track @ git+https://github.com/SheffieldMLtracking/bee_track.git 
 
-retrodetect
+git+https://github.com/SheffieldMLtracking/btretrodetect.git
+
 QueueBuffer @ git+https://github.com/lionfish0/QueueBuffer.git
 
 psutil==5.*
