@@ -289,7 +289,14 @@ def setlabel(label : str):
     for camera in cameras:
         camera.label.value = bytes(label[1:],'utf-8')
     return "Set to %s" % label[1:]
-       
+
+@app.route('/getlabel')
+def getlabel():
+    #Label set as setname,sessionname
+    for camera in cameras:
+        labelstatus=camera.label.value#= bytes(label[1:],'utf-8')
+    return "Value of label is " +str(labelstatus,'utf-8')
+    
 @app.route('/reboot')
 def reboot():
     print("Reboot")
