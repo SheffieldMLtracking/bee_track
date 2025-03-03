@@ -185,6 +185,17 @@ class Aravis_Camera(Camera):
             if config[0] == 'predelay':   
                 aravis_device = self.aravis_camera.get_device()             
                 aravis_device.set_integer_feature_value("StrobeLinePreDelay", config[1])
+            if config[0] == 'exposure_get': #Allow us to check exposure, delay, predelay values
+                expstatus=self.aravis_camera.get_exposure_time()
+                self.message_queue.put("Exposure: "+str(expstatus))
+            if config[0] == 'delay_get':
+                aravis_device = self.aravis_camera.get_device()
+                delstatus=aravis_device.get_integer_feature_value("StrobeLineDelay")
+                self.message_queue.put("Delay: "+str(delstatus))
+            if config[0] == 'predelay_get':   
+                aravis_device = self.aravis_camera.get_device()             
+                prestatus=aravis_device.get_integer_feature_value("StrobeLinePreDelay")
+                self.message_queue.put("Predelay: "+str(prestatus))
     
     def camera_trigger(self):
         while True:
