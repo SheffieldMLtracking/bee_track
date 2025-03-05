@@ -31,18 +31,23 @@ class Configurable():
                     self.message_queue.put("%s not available in this class." % command[1])
                     continue
             
+
             att = getattr(self,command[1])
             if type(att)==sharedctypes.Synchronized:
                 v = att.value
+            elif type(att)==sharedctypes.SynchronizedString: #allows us to get and set "label" using this route. NB, I'm not certain if there are other attributes of this type that would require a different encoding. If so, it may not be possible to set them via this route
+                v = str(att.value,'utf-8')
             else:
                 v = att
-            if command[0]=='get':              
+            if command[0]=='get':
                 self.message_queue.put("Value of %s is %s" % (command[1],v))
                 continue
             if command[0]=='set': 
                 try:
                     if type(att)==sharedctypes.Synchronized:
                         getattr(self,command[1]).value = type(v)(command[2])
+                    elif type(att)==sharedctypes.SynchronizedString:
+                        getattr(self,command[1]).value = bytes(command[2],'utf-8')
                     else:
                         setattr(self,command[1],type(v)(command[2]))
 
@@ -50,4 +55,6 @@ class Configurable():
 
                 except Exception as e:
                     self.message_queue.put("Failed to set:" + str(e))
+
+
             
