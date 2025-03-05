@@ -292,10 +292,9 @@ def setlabel(label : str):
 
 @app.route('/getlabel')
 def getlabel():
-    #Label set as setname,sessionname
-    for camera in cameras:
-        labelstatus=camera.label.value#= bytes(label[1:],'utf-8')
-    return "Value of label is " +str(labelstatus,'utf-8')
+    camera=cameras[0] #assuming that all cameras have same label
+    labelstatus=str(camera.label.value,'utf-8')
+    return "Value of label is %s" % (labelstatus)
     
 @app.route('/reboot')
 def reboot():
