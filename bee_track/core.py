@@ -1,4 +1,4 @@
-from flask import Flask, make_response, jsonify
+from flask import Flask, make_response, jsonify, json
 from bee_track.trigger import Trigger
 from bee_track.rotate import Rotate
 from bee_track.camera_aravis import Aravis_Camera as Camera
@@ -295,6 +295,42 @@ def getlabel():
     camera=cameras[0] #assuming that all cameras have same label
     labelstatus=str(camera.label.value,'utf-8')
     return "Value of label is %s" % (labelstatus)
+
+def getattq(object,field):
+    att=getattr(object,field)
+    if type(att)==multiprocessing.sharedctypes.Synchronized:
+        v = att.value
+    elif type(att)==multiprocessing.sharedctypes.SynchronizedString:
+        v = str(att.value,'utf-8')
+    else:
+        v = att
+    return v
+
+@app.route('/getall/<string:injson>')
+#Input is a json string containing a dictionary with an arbitrary numer of settings to check.
+#Each dictionary item should have a key named "object" with the name of the component to access ("camera", "trigger", "rotate" or "tracking")
+#and a key named "field" with the name of the setting to check (e.g. "t", "label")
+#Returns a json string with the same dictionary, with each entry having a new key "value" giving the current value of that setting
+#E.g. call: '/getall/[{"object":"trigger", "field":"flashseq"},{"object":"camera", "field":"label"}]' to return json with current values for flash sequence and label (session and set names)
+def getall(injson):
+    from flask import json
+    getlist=json.loads(injson)
+    outlist=[]
+    for thisone in getlist:
+        component=thisone["object"]
+        comp = None
+        if component=="camera": comp = cameras[0]
+        if component=="trigger": comp = trigger 
+        if component=="rotate": comp = rotate
+        if component=="tracking": comp = tracking 
+        if comp is None: 
+            v=None
+        else:
+            v=getattq(comp, thisone["field"])
+        thisone["value"]=v
+        outlist.append(thisone)
+    return jsonify(outlist)
+
     
 @app.route('/reboot')
 def reboot():
