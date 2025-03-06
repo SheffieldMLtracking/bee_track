@@ -305,7 +305,7 @@ def getattq(object,field):
     else:
         v = att
     return v
-
+    
 @app.route('/getall/<string:injson>')
 #Input is a json string containing a dictionary with an arbitrary numer of settings to check.
 #Each dictionary item should have a key named "object" with the name of the component to access ("camera", "trigger", "rotate" or "tracking")
@@ -326,11 +326,13 @@ def getall(injson):
         if comp is None: 
             v=None
         else:
-            v=getattq(comp, thisone["field"])
+            if hasattr(comp, thisone["field"]):
+                v=getattq(comp, thisone["field"])
+            else:
+                v="%s not available in this class." % thisone["field"]
         thisone["value"]=v
         outlist.append(thisone)
     return jsonify(outlist)
-
     
 @app.route('/reboot')
 def reboot():
