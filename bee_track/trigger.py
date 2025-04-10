@@ -22,7 +22,10 @@ class Trigger(Configurable):
         self.flash_select_pins = self.all_flash_pins #[8,10,12,16] #Board->BCM pins
 
         self.power_control_pins = [26,20,21]
-        relay_default=1 #1=relays on by default; 0=relays off by default
+        try:
+            relay_default = int(open('~/bee_track/webinterface/relay_default.txt','r').read())
+        except:
+            relay_default = 1 #if there is no text file to tell us the relay setting, we assum it's set to on by default
         if relay_default==1:
             self.logic_states=[True, False] #If flash relays off by default, use [True, False]; if flash relays on by default, use [False, True]
         else:
