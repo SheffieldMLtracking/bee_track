@@ -3,6 +3,7 @@ import datetime
 import RPi.GPIO as GPIO
 from configurable import Configurable
 import multiprocessing
+from pathlib import Path
 
 class Trigger(Configurable):
     def __init__(self,message_queue,cam_trigger,t=2.0):
@@ -23,7 +24,7 @@ class Trigger(Configurable):
 
         self.power_control_pins = [26,20,21]
         try:
-            relay_default = int(open('~/bee_track/webinterface/relay_default.txt','r').read())
+            relay_default = int(open(str(Path.home())+'/bee_track/webinterface/relay_default.txt','r').read())
         except:
             relay_default = 1 #if there is no text file to tell us the relay setting, we assum it's set to on by default
         if relay_default==1:
