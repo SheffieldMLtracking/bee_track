@@ -62,7 +62,7 @@ class Trigger(Configurable):
 
         for pin in self.power_control_pins:
             GPIO.setup(pin, GPIO.OUT)
-            GPIO.output(pin, False)
+            GPIO.output(pin, self.logic_states[1])
             time.sleep(4)
 
         GPIO.output(self.trigger_pin, False)
