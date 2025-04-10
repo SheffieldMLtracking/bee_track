@@ -22,7 +22,12 @@ class Trigger(Configurable):
         self.flash_select_pins = self.all_flash_pins #[8,10,12,16] #Board->BCM pins
 
         self.power_control_pins = [26,20,21]
-        self.power_states = [False, False, False]
+        relay_default=1 #1=relays on by default; 0=relays off by default
+        if relay_default==1:
+            self.logic_states=[True, False] #If flash relays off by default, use [True, False]; if flash relays on by default, use [False, True]
+        else:
+            self.logic_states=[False, True]
+        self.power_states = [self.logic_states[1], self.logic_states[1], self.logic_states[1]]
         self.flash_off_time = self.manager.Value('f',0)
         self.max_flashes = 55
 
@@ -156,43 +161,43 @@ class Trigger(Configurable):
         if self.times_fired[0] >= self.max_flashes:
             print("STARTED POWER CYCLE")
             #start off cycle, top off!!!
-            self.power_states[0] = True
+            self.power_states[0] = self.logic_states[0]
             self.times_fired[0] = 0
             self.times_fired[1] = 0
             self.flash_off_time.value = time.time()
             self.seqn = 0
             self.flashselection = self.manager.Array('i',[2,3,4,5])
             # remove top flashes from flash select pins
-        elif self.power_states[0] == True and (time.time() - self.flash_off_time.value) > 3:
+        elif self.power_states[0] == self.logic_states[0] and (time.time() - self.flash_off_time.value) > 3:
             #Top back on, middle off
-            self.power_states[0] = False
-            self.power_states[1] = True
+            self.power_states[0] = self.logic_states[1]
+            self.power_states[1] = self.logic_states[0]
             self.times_fired[2] = 0
             self.times_fired[3] = 0
             self.flash_off_time.value = time.time()
             self.seqn = 0
             self.flashselection = self.manager.Array('i',[0,1,4,5])
             #Add top flashes back
-        elif self.power_states[1] == True and (time.time() - self.flash_off_time.value) > 3:
+        elif self.power_states[1] == self.logic_states[0] and (time.time() - self.flash_off_time.value) > 3:
             #Middle back on, bottom off
-            self.power_states[1] = False
-            self.power_states[2] = True
+            self.power_states[1] = self.logic_states[1]
+            self.power_states[2] = self.logic_states[0]
 
             self.flash_off_time.value = time.time()
             self.flashselection = self.manager.Array('i',[0,1,2,3])
             self.seqn = 0
-        elif self.power_states[2] == True and (time.time() - self.flash_off_time.value) > 3:
+        elif self.power_states[2] == self.logic_states[0] and (time.time() - self.flash_off_time.value) > 3:
             #Bottom nack on, is_off_cycle to false
-            self.power_states[2] = False
+            self.power_states[2] = self.logic_states[1]
             #times fired to zero
             self.flashselection = self.manager.Array('i',[0,1,2,3,4,5])
             self.seqn = 0
             print("FINISHED POWER CYCLE")
             self.times_fired[4] = 0
             self.times_fired[5] = 0
-        elif self.power_states[0] == False and self.power_states[1] == False and self.power_states[2] == False:
+        elif self.power_states[0] == self.logic_states[1] and self.power_states[1] == self.logic_states[1] and self.power_states[2] == self.logic_states[1]:
             self.flashselection = self.manager.Array('i',[0,1,2,3,4,5])
-            self.power_states = [False, False, False]
+            self.power_states = [self.logic_states[1], self.logic_states[1], self.logic_states[1]]
 
         for (pin,power) in zip(self.power_control_pins, self.power_states):
             GPIO.output(pin,power)
