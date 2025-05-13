@@ -136,6 +136,9 @@ class Trigger(Configurable):
         triggertimestring = triggertimestring.strftime("%Y%m%d_%H:%M:%S.%f")
         self.record.append({'index':self.index.value,'endofset':endofset,'direction':self.direction,'flash':fireflash,
             'flashselection':list(self.flashselection),'triggertime':triggertime,'triggertimestring':triggertimestring})
+        if len(self.record)>40:
+            self.record.pop(0) #ditch old items, this stops this list getting too long and slowing things down when looking for matching items.
+            
         print("Incrementing trigger index from %d" % self.index.value) 
         self.index.value = self.index.value + 1
         #Software trigger...
