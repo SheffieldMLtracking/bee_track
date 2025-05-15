@@ -70,7 +70,7 @@ This should install any dependencies needed for aravis, clone aravis, setup, bui
 
 - THEN install python dependencies in the venv:
 
-`pip install -r bee_track/requirementsJLW250130.txt` *NB: this file is temporary while I test for bugs. Soon I will merge it withe "requirements.txt."*
+`pip install -r bee_track/requirementsMTS250515.txt` *NB: this file is temporary while I test for bugs. Soon I will merge it withe "requirements.txt."* *NB2: switched to old version of PyGObject*
 
 This must be done after running `aravissetup` because some of the python modules rely on some of the installs when installing aravis.
 
