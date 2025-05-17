@@ -27,7 +27,10 @@ class Configurable():
                     self.message_queue.put("Use set or get")
                     continue
             if not hasattr(self,command[1]):
-                    print(self.index)
+                    try:
+                        print(self.index)
+                    except:
+                        print("No such attribute as self.index")
                     self.message_queue.put("%s not available in this class." % command[1])
                     continue
             
