@@ -16,7 +16,7 @@ from mem_top import mem_top
 from datetime import datetime as dt
 import subprocess
 from queue import Empty
-import retrodetect as rd
+import btretrodetect as rd
 from psutil import disk_usage
 import multiprocessing
 from battery import read_batteries
