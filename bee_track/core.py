@@ -232,7 +232,16 @@ def startup():
         else:
             colourcam = cam
             
-    tracking = Tracking(message_queue,greyscalecam.photo_queue,colourcam.photo_queue)
+    if greyscalecam is not None: #ensure that we can still startup box even if both cameras are not detected
+        if colourcam is not None:
+            tracking = Tracking(message_queue,greyscalecam.photo_queue,colourcam.photo_queue)
+        else:
+            tracking = Tracking(message_queue,greyscalecam.photo_queue,None)
+    else:
+        if colourcam is not None:
+            tracking = Tracking(message_queue,None,colourcam.photo_queue)
+        else:
+            tracking = Tracking(message_queue,None,None)
     t = Process(target=tracking.worker)
     t.start()
     
