@@ -8,8 +8,8 @@ class Tracking(Configurable):
         self.greyscale_photo_queue = greyscale_photo_queue
         self.colour_photo_queue = colour_photo_queue        
         #self.tracking_queue = Queue()         
-        self.g_rd = Retrodetect()
-        self.c_rd = ColourRetrodetect(patchSize=24)
+        self.g_rd = Retrodetect(message_queue=message_queue)
+        self.c_rd = ColourRetrodetect(patchSize=48,message_queue=message_queue)
         self.g_rd.associated_colour_retrodetect = self.c_rd
         #self.track = Value('i',0)
         self.info = False
