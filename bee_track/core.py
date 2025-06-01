@@ -222,7 +222,7 @@ def startup():
     #we'll make the tracking camera the first greyscale one if there is one, otherwise the 0th one.
     greyscalecam = None
     colourcam = None
-    
+    scalingfactor = 2
     print("looking for camera to use for tracking...")
     for cam in cameras:
         print("Cam...")
@@ -234,14 +234,14 @@ def startup():
             
     if greyscalecam is not None: #ensure that we can still startup box even if both cameras are not detected
         if colourcam is not None:
-            tracking = Tracking(message_queue,greyscalecam.photo_queue,colourcam.photo_queue)
+            tracking = Tracking(message_queue,greyscalecam.photo_queue,colourcam.photo_queue,scalingfactor=scalingfactor)
         else:
-            tracking = Tracking(message_queue,greyscalecam.photo_queue,None)
+            tracking = Tracking(message_queue,greyscalecam.photo_queue,None,scalingfactor=scalingfactor)
     else:
         if colourcam is not None:
-            tracking = Tracking(message_queue,None,colourcam.photo_queue)
+            tracking = Tracking(message_queue,None,colourcam.photo_queue,scalingfactor=scalingfactor)
         else:
-            tracking = Tracking(message_queue,None,None)
+            tracking = Tracking(message_queue,None,None,scalingfactor=scalingfactor)
     t = Process(target=tracking.worker)
     t.start()
     
