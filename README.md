@@ -242,6 +242,104 @@ You will probably want to reinstall with git an editable version:
 
 `sudo reboot`
 
+## Set up timers (optional)
+
+If you want the tracker to automatically start and stop taking photos at the same times each day, you can set up timers using systemd:
+
+- Create a file for the 'on' timer:
+
+`sudo nano /etc/systemd/system/starttracking.timer`
+
+- Add the following, save and exit:
+
+```
+[Unit]
+Description="Run starttracking.service every morning at 7 o'clock"
+[Timer]
+OnCalendar=Mon..Sun *-*-* 07:00:00
+Persistent=true
+Unit=starttracking.service
+[Install]
+WantedBy=multi-user.target
+```
+
+- Now create a 'service' file. This is run whenever the timer goes off and can be used to specify commeands or scripts to run.
+
+`sudo nano /etc/systemd/system/starttracking.service`
+
+- Add the following, save and exit:
+
+```
+[Unit]
+Description="Start taking photos with current settings"
+[Service]
+ExecStart=wget 127.0.0.1:5000/start
+```
+
+- Modify permissions:
+
+`sudo chmod 644 /etc/systemd/system/starttracking.service`
+
+`sudo chmod 644 /etc/systemd/system/starttracking.timer`
+
+- Get systemd to analyse the new files to ensure they are OK. If there are no issues this command will not print any output:
+
+`systemd-analyze verify /etc/systemd/system/starttracking.*`
+
+-Enable and start the timer:
+
+`sudo systemctl enable starttracking.timer`
+
+`sudo systemctl start starttracking.timer`
+
+- Now create timer and service files to turn off the tracker:
+
+`sudo nano /etc/systemd/system/stoptracking.timer`
+
+- Add the following, save and exit:
+
+```
+[Unit]
+Description="Run stoptracking.service every evening at 19 o'clock"
+[Timer]
+OnCalendar=Mon..Sun *-*-* 19:00:00
+Persistent=true
+Unit=stoptracking.service
+[Install]
+WantedBy=multi-user.target
+```
+
+`sudo nano /etc/systemd/system/stoptracking.service`
+
+- Add the following, save and exit:
+
+```
+[Unit]
+Description="Stop taking photos, wait 1 minute then reboot"
+[Service]
+ExecStart=wget 127.0.0.1:5000/stop
+ExecStartPost=sleep 60
+ExecStartPost=wget 127.0.0.1:5000/reboot
+```
+
+- Modify permissions, analyse files and enable and start the timer:
+
+`sudo chmod 644 /etc/systemd/system/stoptracking.service`
+
+`sudo chmod 644 /etc/systemd/system/stoptracking.timer`
+
+`systemd-analyze verify /etc/systemd/system/stoptracking.*`
+
+`sudo systemctl enable stoptracking.timer`
+
+`sudo systemctl start stoptracking.timer`
+
+-You can check the status of the timers using the following commands. This should let you know whther the timer is active and when it will next be triggered:
+
+`systemctl status starttracking.timer`
+
+`systemctl status stoptracking.timer`
+
 
 # Running Beetrack from command line
 
