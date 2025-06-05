@@ -340,6 +340,41 @@ ExecStartPost=wget 127.0.0.1:5000/reboot
 
 `systemctl status stoptracking.timer`
 
+#### Timer to clean  up empy directories (optional)
+
+When we use rsync to automatically transfer photos to x-drive (see data_pipline repository), it moves all the files but leaves the empty directory tree on the box. I use a timer to simply delete any empty directories in the beephotos folder once per day just to clean up the directory structure:
+
+`sudo nano /etc/systemd/system/deleteemptydirs.timer`; add the following, save and exit:
+
+```
+[Unit]
+Description="Run deleteemptydirs.service every night at midnight"
+[Timer]
+OnCalendar=Mon..Sun *-*-* 00:00:00
+Persistent=true
+Unit=deleteemptydirs.service
+[Install]
+WantedBy=multi-user.target
+```
+
+`sudo nano /etc/systemd/system/deleteemptydirs.service`; add the following, save and exit:
+
+```
+[Unit]
+Description="Find and delete any empty directories left behind in beephotos after data transfer"
+[Service]
+ExecStart=find /home/pi/beephotos -depth -type d -empty -not -path /home/pi/beephotos -delete
+```
+
+`sudo chmod 644 /etc/systemd/system/deleteemptydirs.service`
+
+`sudo chmod 644 /etc/systemd/system/deleteemptydirs.timer`
+
+`systemd-analyze verify /etc/systemd/system/deleteemptydirs.*`
+
+`sudo systemctl enable deleteemptydirs.timer`
+
+`sudo systemctl start deleteemptydirs.timer`
 
 # Running Beetrack from command line
 
