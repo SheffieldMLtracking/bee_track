@@ -222,7 +222,7 @@ def startup():
     #we'll make the tracking camera the first greyscale one if there is one, otherwise the 0th one.
     greyscalecam = None
     colourcam = None
-    scalingfactor = 2
+    scalingfactor = 3 ### USED TO BE 2!
     print("looking for camera to use for tracking...")
     for cam in cameras:
         print("Cam...")
