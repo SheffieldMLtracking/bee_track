@@ -235,8 +235,13 @@ def startup():
     if greyscalecam is not None: #ensure that we can still startup box even if both cameras are not detected
         if colourcam is not None:
             tracking = Tracking(message_queue,greyscalecam.photo_queue,colourcam.photo_queue,scalingfactor=scalingfactor)
-        else:
-            tracking = Tracking(message_queue,greyscalecam.photo_queue,None,scalingfactor=scalingfactor)
+        else: #in a greyscale-only box, we create a dummy colour camera to prevent Tracking from crashing
+            colourcam_dummy = Dummy_Camera(message_queue,trigger.record,cam_trigger,cam_id=10)
+            t = Process(target=colourcam_dummy.worker)
+            t.start()
+            import time
+            time.sleep(1)
+            tracking = Tracking(message_queue,greyscalecam.photo_queue,colourcam_dummy.photo_queue,scalingfactor=scalingfactor)
     else:
         if colourcam is not None:
             tracking = Tracking(message_queue,None,colourcam.photo_queue,scalingfactor=scalingfactor)
