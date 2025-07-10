@@ -22,9 +22,10 @@ class Tracking(Configurable):
             print("Waiting for photos...")
             greyscale_index,greyscale_photoitem = self.greyscale_photo_queue.pop()
             print(" greyscale popped ")
-            self.g_rd.process_image(greyscale_photoitem)            
-            colour_index,colour_photoitem = self.colour_photo_queue.pop()
-            print(" colour popped  --> processing.")
-            self.c_rd.process_image(colour_photoitem)
+            self.g_rd.process_image(greyscale_photoitem) 
+            if self.colour_photo_queue is not None:
+                colour_index,colour_photoitem = self.colour_photo_queue.pop()
+                print(" colour popped  --> processing.")
+                self.c_rd.process_image(colour_photoitem)
             
 
