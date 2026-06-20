@@ -200,7 +200,7 @@ class Aravis_Camera(Camera):
         - a numpy array of the 'raw' image (either unsigned 8-bit - if getraw True, otherwise a float).
         - the timestamp
         """
-        print("ARAVIS")
+        print("Getting photo")
         buffer = self.stream.pop_buffer()
         
         #buffer = None
@@ -223,7 +223,7 @@ class Aravis_Camera(Camera):
             self.stream.push_buffer(buffer) #return it to the buffer
             gc.collect()
             return None,None
-        print("Stream statistics")
+        
         print(self.stream.get_statistics())
         if self.debug: print(self.cam_id,"buffer ok")
         if getraw:

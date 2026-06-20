@@ -384,10 +384,12 @@ def getimagewithindex(photo_queue,idx):
 @app.route('/getimage/<int:number>/<int:camera_id>')
 @app.route('/getimage/<int:number>')
 def getimage(number,camera_id=0):
-    #global camera
-    #global message_queue
-    #photoitem = cameras[camera_id].photo_queue.read(number)
+    global tracking
+    #photoitem = getimagewithindex(cameras[camera_id].photo_queue,number)
+    
+    trackitem = getimagewithindex(tracking.tracking_queue,number)
     photoitem = getimagewithindex(cameras[camera_id].photo_queue,number)
+    
     if photoitem is None:
         message_queue.put("Photo %d doesn't exist" % number)
         return "Failed"
@@ -395,20 +397,34 @@ def getimage(number,camera_id=0):
         message_queue.put("Photo %d failed" % number)
         return "Failed"
     img = lowresmaximg(photoitem['img'],blocksize=5).astype(int)
-    if (len(photoitem)>3) and ('track' in photoitem) and (photoitem['track'] is not None):
+    if ('imgpatches' in trackitem) and (trackitem['imgpatches'] is not None):
+        print("GOT A TRACK ITEM")
         newtracklist = []
-        for track in photoitem['track']:
-            track['patch']=track['patch'].tolist() #makes it jsonable
-            track['searchpatch']=track['searchpatch'].tolist() #makes it jsonable
-            track['mean']=float(track['mean'])
-            track['searchmax']=float(track['searchmax'])
-            track['centremax']=float(track['centremax'])
-            track['x']=int(track['x'])
-            track['y']=int(track['y'])
+        #for track in photoitem['track']:
+        #    track['patch']=track['patch'].tolist() #makes it jsonable
+        #    track['searchpatch']=track['searchpatch'].tolist() #makes it jsonable
+        #    track['mean']=float(track['mean'])
+        #    track['searchmax']=float(track['searchmax'])
+        #    track['centremax']=float(track['centremax'])
+        #    track['x']=int(track['x'])
+        #    track['y']=int(track['y'])
+        #    newtracklist.append(track)
+        for patch in trackitem['imgpatches']:
+            track = {}
+            track['x']=int(patch['x'])
+            track['y']=int(patch['y'])
+            if 'retrodetect_predictions' in patch:
+                track['prediction']=float(patch['retrodetect_predictions'])
+            else:
+                track['prediction'] = None
+            track['max'] = float(patch['diff_max'])
+            print(track)
             newtracklist.append(track)
     else:
         newtracklist = []
-    return jsonify({'index':photoitem['index'],'photo':img.tolist(),'record':photoitem['record'],'track':newtracklist})
+    
+    return jsonify({'index':photoitem['index'],'photo':img.tolist(),'record':photoitem['record'],'track':newtracklist})   #,'imgpatches':trackitem['imgpatches']})
+    #
 
 @app.route('/getcontact')
 def getcontact(): #TODO this is mostly done by getimage, maybe just return an index?

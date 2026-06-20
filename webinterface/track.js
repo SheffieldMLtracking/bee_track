@@ -258,7 +258,7 @@ function reachthreshold(track) {
     //does track reach threshold?
     code = $('input[name="thresholdtype"]:checked').val();
     if (code == 0) {
-        if (track['prediction'] < $('input#detectthreshold').val()) {
+        if (track['prediction'] > $('input#detectthreshold').val()) {
             return true;
         } else {
             return false;
@@ -318,12 +318,13 @@ function convertJSONtoImageURL(data) {
             console.log(data['track']);
             for (var i = 0; i < data['track'].length; i++) {
                 msg([data['track'][i]['searchmax'], data['track'][i]['mean'], data['track'][i]['centremax'], data['track'][i]['prediction']])
-                drawcrosshair(imdata, data['track'][i]['x'], data['track'][i]['y'], Math.round(data['track'][i]['searchmax'] / 10), blocksize, width, height, 0, 0, 255);
-                drawcrosshair(imdata, data['track'][i]['x'], data['track'][i]['y'], Math.round(-data['track'][i]['prediction'] * 10), blocksize, width, height, 255, 255, 0);
+                //drawcrosshair(imdata, data['track'][i]['x'], data['track'][i]['y'], Math.round(data['track'][i]['searchmax'] / 10), blocksize, width, height, 0, 0, 255);
+                //drawcrosshair(imdata, data['track'][i]['x'], data['track'][i]['y'], Math.round(data['track'][i]['prediction'] * 10), blocksize, width, height, 255, 255, 0);
                 console.log(data['track'][i]['prediction'])
                 drawcircle(imdata, data['track'][i]['x'], data['track'][i]['y'], 5, blocksize, width, height, 0, 0, 255);
                 if (reachthreshold(data['track'][i])) {
                     drawcircle(imdata, data['track'][i]['x'], data['track'][i]['y'], 15, blocksize, width, height, 255, 255, 0);
+                    $('#beep2s').get(0).play();
                 }
             }
 
@@ -361,24 +362,25 @@ function refreshimages() {
     $('span#index').text(image + 1);//have to add one as python is zero indexed
     $('span#imagecount').text(imagecount);
     msg('Downloading...');
-
+    console.log('Test!');
     camid = $('input#camid').val()
-    url = "http://" + $('input#url').val() + "/getimage/" + image + "/" + camid;
+    url = "http://" + $('input#url').val() + "/getimage/" + image + "/" + camid;    
     $.getJSON(url, function (data) {
+        console.log(data);
         idx = 0;
         $('.tagimages').css("background-image", "url('nodata.png')");
-        if ('track' in data) {
-            if ((data['track'] != null) && (data['track'].length > 0)) {
-                console.log(data['track']);
+        if ('imgpatches' in data) {
+            if ((data['imgpatches'] != null) && (data['imgpatches'].length > 0)) {
+                console.log(data['imgpatches']);
                 $('#trackingresults').text("");
-                for (var i = 0; i < data['track'].length; i++) {
-                    if (reachthreshold(data['track'][i])) {
-                        console.log();
-                        $('#tagimage' + idx).css("background-image", convertSimpleJSONtoImageURL(data['track'][i]['patch']));
-                        $('#trackingresults').append("[focus:" + data['track'][i]['focus'][2].toFixed(2) + "(err=" + data['track'][i]['focusfiterr'].toFixed(2) + ")");
-                        rgb = data['track'][i]['rgb'];
-                        $('#trackingresults').append(", RGB:" + rgb[0].toFixed(0) + "," + rgb[1].toFixed(0) + "," + rgb[2].toFixed(0) + "]");
-                        idx = idx + 1;
+                for (var i = 0; i < data['imgpatches'].length; i++) {
+                    if (data['imgpatches'][i]['retrodetect_predictions']>0.01) {
+                        console.log(data['imgpatches'][i]);
+                        //$('#tagimage' + idx).css("background-image", convertSimpleJSONtoImageURL(data['track'][i]['patch']));
+                        //$('#trackingresults').append("[focus:" + data['track'][i]['focus'][2].toFixed(2) + "(err=" + data['track'][i]['focusfiterr'].toFixed(2) + ")");
+                        //rgb = data['track'][i]['rgb'];
+                        //$('#trackingresults').append(", RGB:" + rgb[0].toFixed(0) + "," + rgb[1].toFixed(0) + "," + rgb[2].toFixed(0) + "]");
+                        //idx = idx + 1;
                     }
                 }
             }
